@@ -1,0 +1,181 @@
+@charset "UTF-8";
+.thin-border, .main_screen .sidebar, .main_screen .pages, .finder textarea, .top_title {
+  border: solid #21759B;
+  border-width: 1px;
+}
+
+.stays-top, .finder .search, .finder .replace {
+  z-index: 9999;
+}
+
+.top_title {
+  margin: 0px 150px;
+  background-color: #FBFAFA;
+  padding: 8px;
+  border-bottom: 0px;
+}
+.top_title h3 {
+  margin: 0px;
+  color: #21759B;
+  text-align: center;
+}
+
+.finder-wrapper {
+  padding: 0% 10%;
+}
+
+.finder {
+  font-family: Poppins, sans-serif;
+  width: 100%;
+}
+.finder ::-webkit-scrollbar {
+  width: 5px;
+}
+.finder ::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+.finder ::-webkit-scrollbar-thumb {
+  background: #979797;
+  border-radius: 10px;
+}
+.finder ::-webkit-scrollbar-thumb:hover {
+  background: #979797;
+}
+.finder textarea {
+  padding: 20px;
+  resize: none;
+  width: 100%;
+  border-bottom-width: 7px;
+}
+.finder textarea :active {
+  border: none;
+}
+.finder textarea :focus {
+  border: unset;
+}
+.finder .shadow, .finder .search, .finder .replace {
+  filter: drop-shadow(0px 16px 10px rgba(0, 0, 0, 0.16));
+}
+.finder .replace {
+  position: relative;
+  top: -70px;
+}
+.finder .search {
+  position: relative;
+}
+.finder button {
+  cursor: pointer;
+  background-color: #21759B;
+  color: white;
+  font-family: Poppins, sans-serif;
+  font-weight: bold;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 5px;
+  margin-left: 45%;
+  position: relative;
+  top: -27px;
+}
+
+.main_screen {
+  width: 96%;
+  margin-left: 2%;
+  position: relative;
+  top: -60px;
+  display: flex;
+  height: 400px;
+}
+.main_screen .pages {
+  overflow-y: auto;
+  width: 60%;
+  z-index: 1;
+  border-right-width: 0px;
+}
+.main_screen .pages .nodisplay {
+  display: none;
+}
+.main_screen .pages .empty {
+  position: absolute;
+  top: 35%;
+  left: 20%;
+}
+.main_screen .pages .empty h3 {
+  user-select: none;
+  color: #D2D2D2;
+}
+.main_screen .pages ul {
+  margin: 0px;
+  margin-top: 50px;
+  padding: 0px;
+}
+.main_screen .pages ul li {
+  font-size: small;
+  padding: 15px;
+}
+.main_screen .pages ul > :nth-child(2n+1) {
+  background-color: #FBFAFA;
+}
+.main_screen .sidebar {
+  padding: 0px;
+  width: 40%;
+  overflow: auto;
+}
+.main_screen .sidebar h4 {
+  text-align: center;
+  color: #21759B;
+}
+.main_screen .sidebar ul {
+  list-style: none;
+}
+.main_screen .sidebar .page_prop_form {
+  padding: 20% 5%;
+}
+.main_screen .sidebar .page_prop_form input {
+  width: 95%;
+  margin: 8px;
+  background-color: #FBFAFA;
+  border: 0px;
+  padding: 5px;
+  display: block;
+}
+.main_screen .sidebar .messages ul {
+  margin: unset;
+  padding: 25px;
+}
+.main_screen .sidebar .messages ul li {
+  padding-top: 5px;
+  font-size: small;
+  color: gray;
+}
+.main_screen .sidebar .messages :nth-child(2n+1) {
+  background-color: #FFFFFF;
+}
+.main_screen .sidebar .past_searches {
+  padding: 2% 0%;
+  background-color: #FBFAFA;
+}
+.main_screen .sidebar .past_searches ul {
+  list-style: circle;
+  margin: unset;
+  padding: unset;
+}
+.main_screen .sidebar .past_searches ul li {
+  cursor: pointer;
+  margin: 0px;
+  color: gray;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 5px 20px;
+  font-size: small;
+}
+.main_screen .sidebar .past_searches ul ::before {
+  content: "⚪ ";
+}
+.main_screen .sidebar .past_searches ul :hover {
+  background-color: #EBEBEB;
+}
+
+/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,238 @@
+
+$accent:#21759B;
+$main_background:#ECECEC;
+$lightBg:#FFFFFF;
+$greyBg:#EBEBEB;
+$lightGreyBg:#FBFAFA;
+$darkerGrey:#979797;
+$textgrey:#D2D2D2;
+$font:Poppins,sans-serif;
+
+// @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;1,200&display=swap');
+.thin-border{
+    
+    border: solid $accent;
+    border-width:1px;
+    
+}
+.stays-top{
+    z-index: 9999;
+}
+.top_title{
+    margin:0px 150px;
+    background-color: $lightGreyBg;
+    padding: 8px;
+  
+    h3{
+        margin: 0px;
+        color: $accent;
+        text-align: center;
+    }
+    @extend .thin-border;
+    border-bottom:0px;
+}
+
+
+.finder-wrapper{
+    // background-color: $main_background;
+    padding: 0% 10%;
+   
+}
+@mixin custom-scrollbar {
+    ::-webkit-scrollbar {
+        width: 5px;
+      }
+      
+     
+      ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey; 
+        border-radius: 10px;
+        
+      }
+       
+      
+      ::-webkit-scrollbar-thumb {
+        background: $darkerGrey; 
+        border-radius: 10px;
+      }
+      
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background:$darkerGrey;
+      }
+}
+
+
+.finder{
+    @include custom-scrollbar();
+   
+    font-family: $font;
+    width: 100%;
+    // margin-left: 5%;
+    textarea{
+        padding: 20px;
+        resize: none;
+        width: 100%;
+        @extend .thin-border;
+        border-bottom-width: 7px;
+       
+        :active{
+            border: none;
+        }
+        :focus{
+            border: unset;
+        }
+       
+
+    }
+    .shadow{
+        filter:drop-shadow(0px 16px 10px rgba(0, 0, 0, 0.16));
+    }
+    .replace{
+        @extend .shadow;
+        position: relative;
+        top:-70px;
+        @extend .stays-top;
+    }
+    .search{
+        @extend .stays-top;
+        position: relative;
+        @extend .shadow;
+    }
+   
+    
+    button{
+        cursor:pointer;
+        background-color: $accent;
+        color: white;
+        font-family: $font;
+        font-weight: bold;
+        padding: 10px 25px;
+        border: none;
+        border-radius: 5px;
+        margin-left: 45%;
+        position: relative;
+        top: -27px;
+    }
+}
+
+
+
+.main_screen{
+   width: 96%;
+   margin-left: 2%;
+    // margin: 0px 20px;
+   position: relative;
+   top:-60px;
+    display: flex;
+    height: 400px;
+    .pages{
+        .nodisplay{
+            display: none;
+        }
+        .empty{
+          
+            position: absolute;
+            top: 35%;
+            left: 20%;
+            h3{
+                user-select: none;
+                color: $textgrey;
+            }
+        }
+        overflow-y: auto;
+        @extend .thin-border;
+        width: 60%;
+        z-index: 1;
+        border-right-width: 0px;
+        ul{
+            margin: 0px;
+            margin-top: 50px;
+            padding: 0px;
+            li{ 
+                font-size: small;
+                padding: 15px;
+               
+            }
+            >:nth-child(2n+1){
+                background-color: $lightGreyBg;
+            }
+        }
+    }
+    .sidebar{
+        h4{
+            text-align: center;
+            color: $accent;
+        }
+        ul{
+            list-style: none;
+        }
+        .page_prop_form{
+            padding: 20% 5%;
+            input{
+                width: 95%;
+                margin: 8px;
+                background-color: $lightGreyBg;
+                border: 0px;
+                padding: 5px;
+                display: block;
+            }
+
+        
+        }
+        @extend .thin-border;
+        padding: 0px;
+        width: 40%;
+        overflow: auto;
+        .messages{
+            // padding-top: 20px;
+            ul{ 
+                margin:unset;
+                padding: 25px;
+                li{
+                    padding-top: 5px;
+                    font-size: small;
+                    color:gray;
+                }
+               
+            }
+            :nth-child(2n+1){
+                background-color: $lightBg;
+            }
+        }
+        .past_searches{
+            
+            ul{
+                list-style: circle;
+                margin:unset;
+                padding: unset;
+                li{
+                    cursor: pointer;
+                    margin: 0px;
+                    color: gray;
+                    display: block;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    padding: 5px 20px;
+                    font-size: small;
+                    
+                   
+                }
+                ::before{
+                    content: "⚪ ";
+                }
+                :hover{
+                    background-color: $greyBg;
+                }
+               
+               
+               
+            }
+            padding: 2% 0%;
+            background-color: $lightGreyBg;
+        }
+    }
+   
+    
+}
