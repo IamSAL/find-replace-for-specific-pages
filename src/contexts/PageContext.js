@@ -6,6 +6,7 @@ export const PageProvider = (props) => {
     const [pages, setPages] = useState([]);
     return (
         <PageContext.Provider value={[pages, setPages]}>
+
             {props.children}
         </PageContext.Provider>
     )
