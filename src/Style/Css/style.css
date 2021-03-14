@@ -21,7 +21,8 @@
 }
 
 .finder-wrapper {
-  padding: 0% 10%;
+  overflow-x: hidden;
+  padding: 0% 5%;
 }
 
 .finder {
@@ -46,7 +47,6 @@
   padding: 20px;
   resize: none;
   width: 100%;
-  border-bottom-width: 7px;
 }
 .finder textarea :active {
   border: none;
@@ -54,7 +54,7 @@
 .finder textarea :focus {
   border: unset;
 }
-.finder .shadow, .finder .search, .finder .replace {
+.finder .shadow, .finder .replace, .finder .top_title {
   filter: drop-shadow(0px 16px 10px rgba(0, 0, 0, 0.16));
 }
 .finder .replace {
@@ -84,7 +84,7 @@
   position: relative;
   top: -60px;
   display: flex;
-  height: 400px;
+  height: 450px;
 }
 .main_screen .pages {
   overflow-y: auto;
@@ -129,7 +129,7 @@
   list-style: none;
 }
 .main_screen .sidebar .page_prop_form {
-  padding: 20% 5%;
+  padding: 20% 5% 3% 5%;
 }
 .main_screen .sidebar .page_prop_form input {
   width: 95%;
@@ -138,6 +138,9 @@
   border: 0px;
   padding: 5px;
   display: block;
+}
+.main_screen .sidebar .messages {
+  padding-top: 35px;
 }
 .main_screen .sidebar .messages ul {
   margin: unset;
@@ -152,8 +155,8 @@
   background-color: #FFFFFF;
 }
 .main_screen .sidebar .past_searches {
-  padding: 2% 0%;
-  background-color: #FBFAFA;
+  padding: 2% 0% 10% 0%;
+  background-color: #FFFFFF;
 }
 .main_screen .sidebar .past_searches ul {
   list-style: circle;

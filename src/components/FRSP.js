@@ -11,28 +11,29 @@ const FRSP = () => {
     const [replaceStr, setreplaceStr] = useState('');
     const [pastSearches, setpastSearches] = useState([])
     const [loader, setLoader] = useState('Search');
-    const [matchedPages, setmatchedPages] = useState([])
-    const [showMetaForm, setshowMetaForm] = useState(true)
-    const [singlePageTitle, setsinglePageTitle] = useState("title");
-    const [singlePageSlug, setsinglePageSlug] = useState("slug")
     const [ReplaceResults, setReplaceResults] = useState([])
-
-
+    const [showMetaForm, setshowMetaForm] = useState(true)
+    const [singlePageTitle, setsinglePageTitle] = useState("");
+    const [singlePageSlug, setsinglePageSlug] = useState("")
+    const [pages, setpages] = useState([])
+    const [AllPages, setAllPages] = useState([])
+    const [finalData, setfinalData] = useState({ pages: [], replaceStr: "" })
+    const [Messages, setMessages] = useState([` ⛔ Please backup your database first, I'm not responsible for data loss!`])
 
     const url = `${appLocalizer.apiUrl}/frsp/v1/settings`;
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setLoader('Searching...');
-        loadMatchedPages();
-        postSearchStr();
+    function setTempMessage(msg) {
+        setMessages(msgs => [...msgs, msg])
+        setTimeout(() => {
+            setMessages([])
+        }, 3000)
     }
 
-    function loadMatchedPages() {
-        axios.get(`${appLocalizer.apiUrl}/wp/v2/pages/?per_page=100`, {
+    useEffect(() => {
+        axios.get(`https://xiangbugroup.com/index.php/wp-json/wp/v2/pages/?per_page=100`, {
             headers: {
                 'content-type': 'application/json',
-                'X-WP-NONCE': appLocalizer.nonce
+                // 'X-WP-NONCE': appLocalizer.nonce
             }
         })
             .then((res) => {
@@ -56,12 +57,38 @@ const FRSP = () => {
                     }
                     return matchedP;
 
-                }).filter(page => !!page && isMatchedContent(page))
-
-                setmatchedPages(matched)
+                })
+                setpages(matched)
+                setAllPages(matched)
             })
 
-    }
+        axios.get(url)
+            .then((res) => {
+                console.log(url)
+                setLoader('Search');
+                axios.get(url)
+                    .then((res) => {
+                        setpastSearches(res.data.searchStr);
+                    })
+            })
+
+        return () => {
+
+        }
+    }, [])
+
+
+    useEffect(() => {
+        if (searchStr.length > 1) {
+            setpages(pages => AllPages.filter(page => !!page && isMatchedContent(page)))
+        } else {
+            setpages(AllPages)
+        }
+        return () => {
+
+        }
+    }, [searchStr])
+
 
 
 
@@ -76,45 +103,49 @@ const FRSP = () => {
         })
             .then((res) => {
                 setLoader('Search');
-                updatePastList();
-            })
-    }
-    function updatePastList() {
-        axios.get(url)
-            .then((res) => {
-                setpastSearches(res.data.searchStr);
+                axios.get(url)
+                    .then((res) => {
+                        setpastSearches(res.data.searchStr);
 
+                    })
             })
     }
 
     function handleReplace(e) {
-        let formData = new FormData(e.target)
-        let data = {
-            pages: [],
-        }
-        for (let [key, value] of formData.entries()) {
-            if (key == "replaceStr") {
-                data[key] = value;
-            } else {
-                data.pages.push({ slug: key, id: value })
+        console.log(searchStr.length, replaceStr.length)
+        if (finalData.pages.length == 0 || searchStr.length == 0 || replaceStr.length == 0) {
+            if (finalData.pages.length == 0) {
+                console.log("page error")
+                setTempMessage(`⛔ err! No page selected.`)
             }
+
+            if (searchStr.length == 0) {
+                console.log("search str error")
+                setTempMessage(`⛔ err! No search value.`)
+            }
+            if (replaceStr.length == 0) {
+                console.log("replce str error")
+                setTempMessage(`⛔ err! No replace value.`)
+            }
+            return 0;
+        } else {
+            const toReplace = [];
+            finalData.pages.forEach(page => toReplace.push(replacePageContent(page, finalData.pages.length == 1)))
+            Promise.allSettled(toReplace).then(res => {
+                setReplaceResults([...res.map(singleRes => singleRes.reason)])
+                resetAll()
+            })
+            postSearchStr()
+            e.preventDefault();
         }
-        let toReplace = [];
 
-        data.pages.forEach(page => toReplace.push(replacePageContent(page, data.pages.length == 1)))
-        Promise.allSettled(toReplace).then(res => {
-            setReplaceResults([...res.map(singleRes => singleRes.reason)])
-            resetAll()
-        })
-
-        e.preventDefault();
     }
+
     function resetAll() {
         setsearchStr("")
         setreplaceStr("")
         setsinglePageSlug("")
         setsinglePageTitle("")
-        setmatchedPages([])
     }
 
     function isMatchedContent(page) {
@@ -122,7 +153,6 @@ const FRSP = () => {
         let currentPageContent = content.rendered;
         return currentPageContent.includes(searchStr);
     }
-
 
 
     function replacePageContent(page, isSingle) {
@@ -134,8 +164,6 @@ const FRSP = () => {
                 single: isSingle,
                 pageTitle: singlePageTitle || " ",
                 pageSlug: singlePageSlug || page.slug
-
-
             }, {
                 headers: {
                     'content-type': 'application/json',
@@ -152,112 +180,18 @@ const FRSP = () => {
         })
     }
 
-
-
-    function updatePageMetaShower() {
-        let formData = new FormData(document.getElementById('pageForm'))
-        let data = {
-            pages: [],
-        }
-        for (let [key, value] of formData.entries()) {
-            if (key == "replaceStr") {
-                data[key] = value;
-            } else {
-                data.pages.push({ slug: key, id: value })
-            }
-
-        }
-        console.log(data.pages.length)
-        if (data.pages.length < 2) {
-            setshowMetaForm(true);
-        } else {
-            setshowMetaForm(false);
-        }
-
-    }
-
-    useEffect(() => {
-        updatePastList();
-    }, [])
-
-
     return (
         <React.Fragment>
-
             <div className="finder-wrapper">
                 <div className="finder">
                     <div className="top_title">
                         <h3>🔎 Find &amp; Replace For Specific Pages.</h3>
                     </div>
                     <Search params={{ searchStr, setsearchStr }} />
-                    <MainScreen />
-                    <Replace params={{ replaceStr, setreplaceStr }} />
+                    <MainScreen params={{ pages, singlePageTitle, setsinglePageTitle, showMetaForm, setshowMetaForm, singlePageSlug, setsinglePageSlug, setfinalData, pastSearches, Messages }} />
+                    <Replace params={{ replaceStr, setreplaceStr, handleReplace, setfinalData, postSearchStr }} />
                 </div>
             </div>
-
-
-
-
-            < h2 > Enter a string to find all the pages that contains it:</h2 >
-            <form id="work-settings-form" onSubmit={(e) => handleSubmit(e)}>
-
-                <label htmlFor="searchStr">Find: </label>
-                <textarea className="regular-text" id="searchStr" onChange={(e) => { setsearchStr(e.target.value); }} value={searchStr}></textarea>
-                <button type="submit" className="button ">{loader}</button>
-
-            </form>
-
-            <h4 title="Select the pages you want to replace the search string.">Matched Pages:</h4>
-
-            <form onSubmit={(e) => handleReplace(e)} id="pageForm">
-                {
-                    matchedPages && matchedPages.map(page => {
-
-                        return <div>
-                            <input type="checkbox" id={page.id} name={page.slug} value={page.id} onChange={(e) => {
-
-                                if (showMetaForm) {
-                                    setsinglePageTitle(page.title);
-                                    setsinglePageSlug(page.slug);
-                                    console.log({ singlePageTitle, singlePageSlug })
-                                }
-                                updatePageMetaShower(e);
-
-                            }} />
-                            <label htmlFor={page.id}> {page.title}</label>
-                        </div>
-
-
-                    })
-                }
-                <label htmlFor="replaceStr">Replace: </label>
-                <textarea className="regular-text" name="replaceStr" id="replaceStr" onChange={(e) => { setreplaceStr(e.target.value); }} value={replaceStr}></textarea>
-                <button type="submit" className="button ">Replace</button>
-            </form>
-
-
-            {
-                showMetaForm && <React.Fragment >
-                    <input type="text" placeholder="New Title" onChange={(e) => setsinglePageTitle(e.target.value)} value={singlePageTitle} />
-                    <input type="text" placeholder="New Slug" onChange={(e) => setsinglePageSlug(e.target.value)} value={singlePageSlug} />
-                </React.Fragment >
-            }
-
-            <details style={{ marginTop: "40px" }}>
-                <summary>Past Searches:</summary>
-                <ul>
-                    {
-
-
-                        pastSearches && pastSearches.map(str => {
-                            return <li>{str}</li>
-                        })
-                    }
-                </ul>
-            </details>
-
-
-
         </React.Fragment >
     )
 }

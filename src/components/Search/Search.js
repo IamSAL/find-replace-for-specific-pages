@@ -6,9 +6,9 @@ const Search = ({ params }) => {
         <div>
             <div className="search">
                 <div className="inputFieldLarge">
-                    <textarea cols={50} rows={2} placeholder="Search for..." onChange={(e) => { setsearchStr(e.target.value) }} defaultValue={searchStr} />
+                    <textarea cols={50} rows={2} placeholder="Search for..." onChange={(e) => { setsearchStr(e.target.value); }} value={searchStr} />
                 </div>
-                <button>Search</button>
+                {/* <button>Search</button> */}
             </div>
         </div>
     )

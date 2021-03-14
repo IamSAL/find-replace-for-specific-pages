@@ -22,7 +22,7 @@ $font:Poppins,sans-serif;
     margin:0px 150px;
     background-color: $lightGreyBg;
     padding: 8px;
-  
+    @extend .shadow;
     h3{
         margin: 0px;
         color: $accent;
@@ -34,8 +34,9 @@ $font:Poppins,sans-serif;
 
 
 .finder-wrapper{
+    overflow-x: hidden;
     // background-color: $main_background;
-    padding: 0% 10%;
+    padding: 0% 5%;
    
 }
 @mixin custom-scrollbar {
@@ -74,7 +75,7 @@ $font:Poppins,sans-serif;
         resize: none;
         width: 100%;
         @extend .thin-border;
-        border-bottom-width: 7px;
+        // border-bottom-width: 7px;
        
         :active{
             border: none;
@@ -97,7 +98,7 @@ $font:Poppins,sans-serif;
     .search{
         @extend .stays-top;
         position: relative;
-        @extend .shadow;
+        // @extend .shadow;
     }
    
     
@@ -125,7 +126,7 @@ $font:Poppins,sans-serif;
    position: relative;
    top:-60px;
     display: flex;
-    height: 400px;
+    height: 450px;
     .pages{
         .nodisplay{
             display: none;
@@ -168,7 +169,7 @@ $font:Poppins,sans-serif;
             list-style: none;
         }
         .page_prop_form{
-            padding: 20% 5%;
+            padding: 20% 5% 3% 5%;
             input{
                 width: 95%;
                 margin: 8px;
@@ -185,7 +186,8 @@ $font:Poppins,sans-serif;
         width: 40%;
         overflow: auto;
         .messages{
-            // padding-top: 20px;
+            
+            padding-top: 35px;
             ul{ 
                 margin:unset;
                 padding: 25px;
@@ -229,8 +231,8 @@ $font:Poppins,sans-serif;
                
                
             }
-            padding: 2% 0%;
-            background-color: $lightGreyBg;
+            padding: 2% 0% 10% 0%;
+            background-color: $lightBg;
         }
     }
    
