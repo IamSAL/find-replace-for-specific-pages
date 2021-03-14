@@ -1,2 +1,2 @@
 # find-replace-for-specific-pages
-A React JS WordPress Plugin Starter
+Wordpress plugin: search and replace text in specific pages (elementor pages supported)
