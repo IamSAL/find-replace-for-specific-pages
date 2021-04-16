@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import axios from 'axios';
 import '../Style/Css/style.css';
 import Search from './Search/Search';
 import Replace from './Replace/Replace';
 import MainScreen from './MainScreen/MainScreen';
 
-const FRSP = () => {
+export const FRSPcontext = createContext();
+export const FRSP = () => {
 
     const [searchStr, setsearchStr] = useState('');
     const [replaceStr, setreplaceStr] = useState('');
     const [pastSearches, setpastSearches] = useState([])
     const [loader, setLoader] = useState('Search');
-    const [ReplaceResults, setReplaceResults] = useState([])
     const [showMetaForm, setshowMetaForm] = useState(true)
     const [singlePageTitle, setsinglePageTitle] = useState("");
     const [singlePageSlug, setsinglePageSlug] = useState("")
@@ -21,23 +21,26 @@ const FRSP = () => {
     const [Messages, setMessages] = useState([` ⛔ Please backup your database first, I'm not responsible for data loss!`])
 
     const url = `${appLocalizer.apiUrl}/frsp/v1/settings`;
-
+    console.log(url)
     function setTempMessage(msg) {
         setMessages(msgs => [...msgs, msg])
-        setTimeout(() => {
-            setMessages([])
-        }, 3000)
+        // setTimeout(() => {
+        //     setTimeout(() => {
+        //         setMessages([` ⛔ Please backup your database first, I'm not responsible for data loss!`])
+        //     }, 3000)
+
+        // }, 3000)
     }
 
-    useEffect(() => {
-        axios.get(`https://xiangbugroup.com/index.php/wp-json/wp/v2/pages/?per_page=100`, {
+    function updatePageList() {
+        axios.get(appLocalizer.apiUrl + `/wp/v2/pages/?per_page=100`, {
             headers: {
                 'content-type': 'application/json',
-                // 'X-WP-NONCE': appLocalizer.nonce
+                'X-WP-NONCE': appLocalizer.nonce
             }
         })
             .then((res) => {
-                console.log(`${appLocalizer.apiUrl}/wp/v2/pages/?per_page=100`)
+
                 setLoader('Search');
                 let matched = res.data.map(page => {
                     let matchedP
@@ -58,10 +61,16 @@ const FRSP = () => {
                     return matchedP;
 
                 })
+                console.log(res)
+                console.log(matched)
                 setpages(matched)
                 setAllPages(matched)
             })
 
+    }
+
+    useEffect(() => {
+        updatePageList();
         axios.get(url)
             .then((res) => {
                 console.log(url)
@@ -115,7 +124,7 @@ const FRSP = () => {
         console.log(searchStr.length, replaceStr.length)
         if (finalData.pages.length == 0 || searchStr.length == 0 || replaceStr.length == 0) {
             if (finalData.pages.length == 0) {
-                console.log("page error")
+                console.log(finalData)
                 setTempMessage(`⛔ err! No page selected.`)
             }
 
@@ -132,8 +141,17 @@ const FRSP = () => {
             const toReplace = [];
             finalData.pages.forEach(page => toReplace.push(replacePageContent(page, finalData.pages.length == 1)))
             Promise.allSettled(toReplace).then(res => {
-                setReplaceResults([...res.map(singleRes => singleRes.reason)])
+                res.forEach(singleRes => {
+                    console.log(singleRes)
+                    if (singleRes.status == "fulfilled") {
+                        setTempMessage("☑️ " + singleRes.value);
+                    } else if (singleRes.status == "rejected") {
+                        setTempMessage("⛔ " + singleRes.reason);
+                    }
+
+                });
                 resetAll()
+
             })
             postSearchStr()
             e.preventDefault();
@@ -142,6 +160,7 @@ const FRSP = () => {
     }
 
     function resetAll() {
+        document.forms.pageForm.reset()
         setsearchStr("")
         setreplaceStr("")
         setsinglePageSlug("")
@@ -176,24 +195,25 @@ const FRSP = () => {
                     resolve(`${page.id}:${page.slug} SUCCESS(${JSON.stringify(res.data)})`)
                 }
 
-            }).catch(e => reject(`${page.id}:${page.slug} FAIL(${e.message})`))
+            }).catch(e => reject(`${page.id}:${page.slug} FAIL(${e})`))
         })
     }
 
     return (
         <React.Fragment>
-            <div className="finder-wrapper">
-                <div className="finder">
-                    <div className="top_title">
-                        <h3>🔎 Find &amp; Replace For Specific Pages.</h3>
+            <FRSPcontext.Provider value={{ searchStr, setsearchStr, replaceStr, setreplaceStr, setTempMessage, pastSearches }}>
+                <div className="finder-wrapper">
+                    <div className="finder">
+                        <div className="top_title">
+                            <h3>🔎 Find &amp; Replace For Specific Pages.</h3>
+                        </div>
+                        <Search params={{ searchStr, setsearchStr }} />
+                        <MainScreen params={{ pages, singlePageTitle, setsinglePageTitle, showMetaForm, setshowMetaForm, singlePageSlug, setsinglePageSlug, setfinalData, pastSearches, Messages }} />
+                        <Replace params={{ replaceStr, setreplaceStr, handleReplace, setfinalData, postSearchStr }} />
                     </div>
-                    <Search params={{ searchStr, setsearchStr }} />
-                    <MainScreen params={{ pages, singlePageTitle, setsinglePageTitle, showMetaForm, setshowMetaForm, singlePageSlug, setsinglePageSlug, setfinalData, pastSearches, Messages }} />
-                    <Replace params={{ replaceStr, setreplaceStr, handleReplace, setfinalData, postSearchStr }} />
                 </div>
-            </div>
+            </FRSPcontext.Provider>
         </React.Fragment >
     )
 }
 
-export default FRSP;

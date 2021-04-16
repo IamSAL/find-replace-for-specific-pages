@@ -15,7 +15,7 @@ class FRSP_Create_Admin_Page
     public function create_admin_menu()
     {
         $capability = 'manage_options';
-        $slug = 'frsp-settings';
+        $slug = 'frsp';
 
         add_menu_page(
             __('Find Replace-For Specific Pages', 'find-replace-for-specific-pages'),

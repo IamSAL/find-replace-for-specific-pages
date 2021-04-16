@@ -27,7 +27,7 @@ function load_scripts()
 
     wp_enqueue_script('find-replace-for-specific-pages', FRSP_URL . 'dist/bundle.js', ['jquery', 'wp-element'], wp_rand(), true);
     wp_localize_script('find-replace-for-specific-pages', 'appLocalizer', [
-        'apiUrl' => home_url('/index.php/wp-json'),
+        'apiUrl' => home_url('/wp-json'),
         'nonce' => wp_create_nonce('wp_rest'),
         'dev' => 'Salman'
     ]);

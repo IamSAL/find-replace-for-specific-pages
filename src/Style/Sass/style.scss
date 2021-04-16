@@ -15,6 +15,16 @@ $font:Poppins,sans-serif;
     border-width:1px;
     
 }
+.NoPage {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.NoPage h3 {
+    color: #6b6b6b;
+}
 .stays-top{
     z-index: 9999;
 }

@@ -3,6 +3,7 @@
 /**
  * This file will create Custom Rest API End Points.
  */
+
 class WP_React_Settings_Rest_Route
 {
 
@@ -76,35 +77,71 @@ class WP_React_Settings_Rest_Route
         $replaceStr = esc_textarea($req['replaceStr']);
         $pageID = $req['pageID'];
 
-        $pagetoUpdate = get_post($pageID);
-        $content = $pagetoUpdate->post_content;
-        $updated_content = str_replace($searchStr, $replaceStr,  $content);
+        // $pagetoUpdate = get_post($pageID);
+        // $content = $pagetoUpdate->post_content;
+        // $updated_content = str_replace($searchStr, $replaceStr,  $content);
 
-        $single = boolval($req['single']);
-        $pageTitle = sanitize_text_field($req['pageTitle']);
-        $pageSlug = sanitize_title($req['pageSlug']);
+        // $single = boolval($req['single']);
+        // $pageTitle = sanitize_text_field($req['pageTitle']);
+        // $pageSlug = sanitize_title($req['pageSlug']);
 
-        if ($single) {
-            $isupdated = wp_update_post(array(
-                'ID' => $pageID,
-                'post_content' => $updated_content,
-                'post_title' => $pageTitle,
-                'post_name' => $pageSlug
-            ));
+        // if ($single) {
+        //     $isupdated = wp_update_post(array(
+        //         'ID' => $pageID,
+        //         'post_content' => $updated_content,
+        //         'post_title' => $pageTitle,
+        //         'post_name' => $pageSlug
+        //     ));
+        // }
+
+
+        // $metaToUpdate = get_post_meta($pageID, "_elementor_data", true);
+        // $updatedMeta = str_replace($searchStr, $replaceStr, $metaToUpdate);
+        // if ($metaToUpdate == $updatedMeta) {
+        //     return rest_ensure_response('Nothing to update');
+        // }
+        // $isupdatedMeta = update_post_meta($pageID, "_elementor_data", $updatedMeta);
+
+        // $update_details = array("replaceStr" => $replaceStr, "searchStr" => $searchStr, "pageID" => $pageID, "updated_content" => $updated_content, "isupdatedContent" => $isupdated, "isupdatedMeta" => $isupdatedMeta);
+        // update_option('frsp_settings_last_update_page', $pagetoUpdate->post_name);
+        // update_option('frsp_settings_update_details', $update_details);
+
+
+        global $wpdb;
+        $replaceEle = "UPDATE `win4postmeta`
+        SET 
+        `meta_value` = REPLACE(`meta_value`,
+                '$searchStr',
+                '$replaceStr')
+        WHERE
+        `post_id`='$pageID'";
+        $replace = "UPDATE `win4posts`
+        SET 
+        `post_content` = REPLACE(`post_content`,
+                '$searchStr',
+                '$replaceStr')
+        WHERE
+        `ID`='$pageID'";
+
+
+        $sql = "SELECT `post_title` FROM `win4posts` WHERE ID='$pageID'";
+        $wp_content = $wpdb->get_results($replaceEle);
+        $normal_content = $wpdb->get_results($sql);
+        $ele_content = $wpdb->get_results($replace);
+        $myfile = fopen(__DIR__ . "/Logs.txt", "a") or die("Unable to open file!");
+
+        foreach ($ele_content as $row) {
+            fwrite($myfile, print_r($row, true));
+            fwrite($myfile, "<<<<<");
         }
-
-
-        $metaToUpdate = get_post_meta($pageID, "_elementor_data", true);
-        $updatedMeta = str_replace($searchStr, $replaceStr, $metaToUpdate);
-        if ($metaToUpdate == $updatedMeta) {
-            return rest_ensure_response('Nothing to update');
-        }
-        $isupdatedMeta = update_post_meta($pageID, "_elementor_data", $updatedMeta);
-
-        $update_details = array("replaceStr" => $replaceStr, "searchStr" => $searchStr, "pageID" => $pageID, "updated_content" => $updated_content, "isupdatedContent" => $isupdated, "isupdatedMeta" => $isupdatedMeta);
-        update_option('frsp_settings_last_update_page', $pagetoUpdate->post_name);
-        update_option('frsp_settings_update_details', $update_details);
-        return rest_ensure_response('success');
+        fwrite($myfile, date('Y-m-d H:i:s') . '|');
+        fwrite($myfile, print_r($wp_content, true));
+        fwrite($myfile, print_r($ele_content, true));
+        fwrite($myfile, print_r($normal_content, true));
+        fwrite($myfile, "-------------------------------------------------------");
+        fclose($myfile);
+        // print_r($old_content);
+        return rest_ensure_response('success' . json_encode($wp_content) . " Queried" . json_encode($ele_content) . $pageID);
     }
 
     public function save_settings_permission()

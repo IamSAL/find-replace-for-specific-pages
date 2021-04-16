@@ -1,5 +1,5 @@
 import React from 'react';
-import FRSP from './components/FRSP';
+import { FRSP } from './components/FRSP';
 
 function App() {
     return (

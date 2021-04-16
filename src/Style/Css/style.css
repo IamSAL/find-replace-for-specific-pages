@@ -7,7 +7,16 @@
 .stays-top, .finder .search, .finder .replace {
   z-index: 9999;
 }
+.NoPage {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.NoPage h3 {
+    color: #6b6b6b;
+}
 .top_title {
   margin: 0px 150px;
   background-color: #FBFAFA;
